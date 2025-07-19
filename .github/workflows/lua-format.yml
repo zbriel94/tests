@@ -1,0 +1,41 @@
+name: Lua-format
+
+on:
+  push:
+    paths:
+      - "**/*.lua"
+  pull_request:
+    paths:
+      - "**/*.lua"
+  merge_group:
+
+jobs:
+  lua-formatter:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Set up Git
+        run: |
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "GitHub Actions"
+
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+
+      - name: Format with Stylua
+        uses: JohnnyMorganz/stylua-action@v3
+        with:
+          token: ${{ secrets.GH_PAT }}
+          version: latest
+          args: .
+
+      - name: Commit formatted files
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: GitHub Actions
+          author_email: github-actions[bot]@users.noreply.github.com
+          message: "Lua code format - (Stylua)"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
